@@ -1,6 +1,6 @@
 package client
 
-//go:generate mockgen -source=hotelbeds.go -destination=./mock/mock.go -package=hotelbedsmock
+//go:generate mockgen -source=client.go -destination=./mock/mock.go -package=hotelbedsmock
 
 import (
 	"context"
@@ -37,6 +37,18 @@ type HotelIds struct {
 type SearchResponse struct {
 	AuditData AuditData  `json:"auditData"`
 	Hotels    HotelsInfo `json:"hotels"`
+	Error     Error      `json:"error,omitempty"`
+}
+
+// Error is the error struct returned by hotelbeds.
+type Error struct {
+	Code    string `json:"code"`
+	Message string `json:"message"`
+}
+
+// SimpleError is the error struct used with 401 and 403 error codes.
+type SimpleError struct {
+	Error string `json:"error"`
 }
 
 // AuditData represents the request audit data.
