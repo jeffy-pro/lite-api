@@ -83,7 +83,7 @@ func TestHotelBeds_Search(t *testing.T) {
 			reqHeader := r.Header.Get(headerXSignature)
 
 			require.Equal(t, out, reqHeader)
-			require.Equal(t, gzip, r.Header.Get(headerAcceptEncoding))
+			require.Equal(t, gzipAccept, r.Header.Get(headerAcceptEncoding))
 			require.Equal(t, applicationJSON, r.Header.Get(headerAccept))
 			require.Equal(t, apiKey, r.Header.Get(headerApiKey))
 			require.Equal(t, applicationJSON, r.Header.Get(headerContentType))

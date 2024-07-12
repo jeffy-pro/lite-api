@@ -1,6 +1,7 @@
 package hotelbeds
 
 import (
+	"bytes"
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
@@ -21,7 +22,7 @@ const (
 	headerAcceptEncoding = "Accept-Encoding"
 	headerContentType    = "Content-Type"
 	applicationJSON      = "application/json"
-	gzip                 = "gzip"
+	gzipAccept           = "gzip"
 )
 
 type HotelBeds struct {
@@ -47,8 +48,13 @@ func NewHotelBeds(host, apiKey, secret string, clock clock.Clock) *HotelBeds {
 }
 
 func (h *HotelBeds) Search(ctx context.Context, searchReq client.SearchRequest) (client.SearchResponse, error) {
+	reqbody, err := json.Marshal(&searchReq)
+	if err != nil {
+		return client.SearchResponse{}, err
+	}
+
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, fmt.Sprintf("%s%s", h.host,
-		hotelsEndpoint), nil)
+		hotelsEndpoint), bytes.NewBuffer(reqbody))
 
 	if err != nil {
 		return client.SearchResponse{}, err
@@ -56,7 +62,7 @@ func (h *HotelBeds) Search(ctx context.Context, searchReq client.SearchRequest) 
 
 	req.Header.Add(headerApiKey, h.apiKey)
 	req.Header.Add(headerAccept, applicationJSON)
-	req.Header.Add(headerAcceptEncoding, gzip)
+	req.Header.Add(headerAcceptEncoding, gzipAccept)
 	req.Header.Add(headerContentType, applicationJSON)
 
 	signature := h.sign()
