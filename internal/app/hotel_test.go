@@ -22,7 +22,8 @@ func TestHotel_HealthCheck(t *testing.T) {
 		healthCheckResponse := HealthCheckResponse{}
 		require.NoError(t, json.Unmarshal(respBody, &healthCheckResponse))
 		expectedResponse := HealthCheckResponse{
-			Status: http.StatusText(http.StatusOK),
+			Status:     http.StatusText(http.StatusOK),
+			ApiVersion: ApiVersion,
 		}
 		require.Equal(t, expectedResponse, healthCheckResponse)
 	})
