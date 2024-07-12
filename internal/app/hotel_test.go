@@ -28,3 +28,7 @@ func TestHotel_HealthCheck(t *testing.T) {
 		require.Equal(t, expectedResponse, healthCheckResponse)
 	})
 }
+
+func TestHotel_Search(t *testing.T) {
+
+}

@@ -39,3 +39,7 @@ func (h *Hotel) HealthCheck(c *gin.Context) {
 		ApiVersion: ApiVersion,
 	})
 }
+
+func (h *Hotel) Search(c *gin.Context) {
+
+}
