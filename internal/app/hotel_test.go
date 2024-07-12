@@ -1,7 +1,9 @@
 package app
 
 import (
+	"encoding/json"
 	"github.com/stretchr/testify/require"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -15,5 +17,13 @@ func TestHotel_HealthCheck(t *testing.T) {
 		resp := httptest.NewRecorder()
 		router.ServeHTTP(resp, req)
 		require.Equal(t, http.StatusOK, resp.Code)
+		respBody, err := io.ReadAll(resp.Body)
+		require.NoError(t, err)
+		healthCheckResponse := HealthCheckResponse{}
+		require.NoError(t, json.Unmarshal(respBody, &healthCheckResponse))
+		expectedResponse := HealthCheckResponse{
+			Status: http.StatusText(http.StatusOK),
+		}
+		require.Equal(t, expectedResponse, healthCheckResponse)
 	})
 }

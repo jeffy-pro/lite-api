@@ -21,6 +21,10 @@ func (h *Hotel) RegisterRoutes() *gin.Engine {
 	return router
 }
 
+type HealthCheckResponse struct {
+	Status string `json:"status"`
+}
+
 // HealthCheck reports  app health
 func (h *Hotel) HealthCheck(c *gin.Context) {
 }
