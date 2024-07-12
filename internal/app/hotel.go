@@ -2,6 +2,7 @@ package app
 
 import (
 	"github.com/gin-gonic/gin"
+	"lite-api/internal/service"
 	"net/http"
 )
 
@@ -11,11 +12,14 @@ var ApiVersion = "1.0.0"
 
 // Hotel interfaces external HTTP and proxies the requests to Hotelbeds.
 type Hotel struct {
+	dtoService service.DTOService
 }
 
 // NewHotel returns app configured with passed surveyService.
-func NewHotel() *Hotel {
-	return &Hotel{}
+func NewHotel(dtoService service.DTOService) *Hotel {
+	return &Hotel{
+		dtoService: dtoService,
+	}
 }
 
 // RegisterRoutes registers the HTTP endpoints to be exposed to clients.
