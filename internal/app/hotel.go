@@ -2,6 +2,7 @@ package app
 
 import (
 	"github.com/gin-gonic/gin"
+	"lite-api/internal/dto"
 	"lite-api/internal/service"
 	"net/http"
 )
@@ -12,11 +13,11 @@ var ApiVersion = "1.0.0"
 
 // Hotel interfaces external HTTP and proxies the requests to Hotelbeds.
 type Hotel struct {
-	dtoService service.DTOService
+	dtoService service.HotelService
 }
 
 // NewHotel returns app configured with passed surveyService.
-func NewHotel(dtoService service.DTOService) *Hotel {
+func NewHotel(dtoService service.HotelService) *Hotel {
 	return &Hotel{
 		dtoService: dtoService,
 	}
@@ -26,6 +27,12 @@ func NewHotel(dtoService service.DTOService) *Hotel {
 func (h *Hotel) RegisterRoutes() *gin.Engine {
 	router := gin.Default()
 	router.GET("/", h.HealthCheck)
+
+	{
+		hotelsG := router.Group("/hotels")
+
+		hotelsG.GET("/", h.Search)
+	}
 
 	return router
 }
@@ -45,5 +52,22 @@ func (h *Hotel) HealthCheck(c *gin.Context) {
 }
 
 func (h *Hotel) Search(c *gin.Context) {
+	searchReq := dto.SearchRequest{}
+	if err := c.ShouldBindQuery(&searchReq); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
+	if err := searchReq.Validate(); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
+		return
+	}
+
+	resp, err := h.dtoService.Search(c, searchReq)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSONP(http.StatusOK, resp)
 }

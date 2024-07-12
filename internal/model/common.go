@@ -3,8 +3,6 @@ package model
 import (
 	"encoding/json"
 	"errors"
-	"strconv"
-	"strings"
 	"time"
 )
 
@@ -107,19 +105,9 @@ func (i IntegerList) String() string {
 
 // Parse converts the IntegerList to an array of integers
 func (i IntegerList) Parse() ([]int, error) {
-	if i == "" {
-		return []int{}, nil
-	}
-
-	strNums := strings.Split(string(i), ",")
-	nums := make([]int, len(strNums))
-
-	for i, strNum := range strNums {
-		num, err := strconv.Atoi(strings.TrimSpace(strNum))
-		if err != nil {
-			return nil, err
-		}
-		nums[i] = num
+	nums := make([]int, 0)
+	if err := json.Unmarshal([]byte(i), &nums); err != nil {
+		return nil, err
 	}
 
 	return nums, nil
@@ -127,9 +115,9 @@ func (i IntegerList) Parse() ([]int, error) {
 
 // Occupancy represents the requested occupancy details in Hotelbeds request.
 type Occupancy struct {
-	Rooms    int `json:"rooms"`
 	Adults   int `json:"adults"`
 	Children int `json:"children"`
+	Rooms    int `json:"rooms"`
 }
 
 // Occupancies is a collection of Occupancy.

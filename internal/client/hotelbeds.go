@@ -1,5 +1,7 @@
 package client
 
+//go:generate mockgen -source=hotelbeds.go -destination=./mock/mock.go -package=hotelbedsmock
+
 import (
 	"context"
 	"lite-api/internal/model"

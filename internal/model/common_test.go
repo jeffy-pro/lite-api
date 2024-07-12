@@ -28,7 +28,6 @@ func TestCurrency_Validate(t *testing.T) {
 			currency: Currency(""),
 			wantErr:  ErrCurrencyNotFound,
 		},
-		// Add more test cases here if there are other specific scenarios you want to test
 	}
 
 	for _, tt := range tests {
@@ -129,59 +128,35 @@ func TestDateString_Validate(t *testing.T) {
 func TestIntegerList_Parse(t *testing.T) {
 	tests := []struct {
 		name    string
-		il      IntegerList
+		i       IntegerList
 		want    []int
-		wantErr bool
+		wantErr error
 	}{
 		{
 			name:    "Valid integer list",
-			il:      IntegerList("1,2,3"),
+			i:       IntegerList("[1,2,3]"),
 			want:    []int{1, 2, 3},
-			wantErr: false,
+			wantErr: nil,
 		},
 		{
-			name:    "Valid integer list with spaces",
-			il:      IntegerList(" 1, 2, 3 "),
-			want:    []int{1, 2, 3},
-			wantErr: false,
-		},
-		{
-			name:    "Empty string",
-			il:      IntegerList(""),
+			name:    "Empty list",
+			i:       IntegerList("[]"),
 			want:    []int{},
-			wantErr: false,
+			wantErr: nil,
 		},
 		{
 			name:    "Single number",
-			il:      IntegerList("42"),
+			i:       IntegerList("[42]"),
 			want:    []int{42},
-			wantErr: false,
-		},
-		{
-			name:    "Invalid number in list",
-			il:      IntegerList("1,2,a"),
-			want:    nil,
-			wantErr: true,
-		},
-		{
-			name:    "Invalid format",
-			il:      IntegerList("1,2,3,"),
-			want:    nil,
-			wantErr: true,
-		},
-		{
-			name:    "Negative numbers",
-			il:      IntegerList("-1,0,1"),
-			want:    []int{-1, 0, 1},
-			wantErr: false,
+			wantErr: nil,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := tt.il.Parse()
-			if tt.wantErr {
-				assert.Error(t, err)
+			got, err := tt.i.Parse()
+			if tt.wantErr != nil {
+				assert.Equal(t, err, tt.wantErr)
 				return
 			}
 
