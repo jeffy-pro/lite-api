@@ -33,7 +33,7 @@ func TestHotel_Search(t *testing.T) {
 		cliMock := hotelbedsmock.NewMockHotelBeds(ctrl)
 		searchReq := dto.SearchRequest{
 			Occupancies:      `[{"Rooms":1,"Adults":2,"Children":1}]`,
-			HotelIds:         "[168,264,77]",
+			HotelIds:         "168,264,77",
 			CheckIn:          "2024-07-15",
 			CheckOut:         "2024-07-16",
 			Currency:         "USD",
@@ -55,7 +55,7 @@ func TestHotel_Search(t *testing.T) {
 			cliMock := hotelbedsmock.NewMockHotelBeds(ctrl)
 			searchReq := dto.SearchRequest{
 				Occupancies:      `[{"Rooms":1,"Adults":2,"Children":1}]`,
-				HotelIds:         "[1,2,3]",
+				HotelIds:         "1,2,3",
 				CheckIn:          "2024-07-15",
 				CheckOut:         "2024-07-16",
 				Currency:         "EUR",
@@ -93,7 +93,7 @@ func TestHotel_Search(t *testing.T) {
 			cliMock := hotelbedsmock.NewMockHotelBeds(ctrl)
 			searchReq := dto.SearchRequest{
 				Occupancies:      `[{"Rooms":1,"Adults":2,"Children":1}]`,
-				HotelIds:         "[168,264,77]",
+				HotelIds:         "168,264,77",
 				CheckIn:          "2024-07-15",
 				CheckOut:         "2024-07-16",
 				Currency:         "EUR",
@@ -127,7 +127,7 @@ func TestHotel_Search(t *testing.T) {
 
 			searchReq := dto.SearchRequest{
 				Occupancies:      `[{"Rooms":1,"Adults":2,"Children":1}]`,
-				HotelIds:         "[168,264,77]",
+				HotelIds:         "168,264,77",
 				CheckIn:          "2024-07-15",
 				CheckOut:         "2024-07-16",
 				Currency:         "EUR",

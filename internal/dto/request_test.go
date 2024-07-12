@@ -24,7 +24,7 @@ func TestSearchRequest_Validate(t *testing.T) {
 				CheckOut:         validCheckOut,
 				Currency:         model.Currency("USD"),
 				GuestNationality: model.Country("US"),
-				HotelIds:         model.IntegerList("[1,2,3]"),
+				HotelIds:         model.IntegerList("1,2,3"),
 				Occupancies:      model.OccupancyList(`[{"Rooms":1,"Adults":2,"Children":1}]`),
 			},
 			wantErr: nil,
@@ -71,7 +71,7 @@ func TestSearchRequest_Validate(t *testing.T) {
 				CheckOut:         validCheckOut,
 				Currency:         model.Currency("USD"),
 				GuestNationality: model.Country("US"),
-				HotelIds:         model.IntegerList("[]"),
+				HotelIds:         model.IntegerList(""),
 			},
 			wantErr: ErrEmptyHotelIds,
 		},
@@ -82,7 +82,7 @@ func TestSearchRequest_Validate(t *testing.T) {
 				CheckOut:         validCheckOut,
 				Currency:         model.Currency("USD"),
 				GuestNationality: model.Country("US"),
-				HotelIds:         model.IntegerList("[1,2,3]"),
+				HotelIds:         model.IntegerList("1,2,3"),
 				Occupancies:      model.OccupancyList(`[{"Rooms":0,"Adults":2,"Children":1}]`),
 			},
 			wantErr: model.ErrMinOneRoomRequired,
@@ -111,7 +111,7 @@ func TestSearchRequest_Transform(t *testing.T) {
 				CheckIn:     model.DateString("2023-07-01"),
 				CheckOut:    model.DateString("2023-07-05"),
 				Occupancies: model.OccupancyList(`[{"Rooms":1,"Adults":2,"Children":1}]`),
-				HotelIds:    model.IntegerList("[1,2,3]"),
+				HotelIds:    model.IntegerList("1,2,3"),
 			},
 			want: client.SearchRequest{
 				Stay: client.Stay{
@@ -131,7 +131,7 @@ func TestSearchRequest_Transform(t *testing.T) {
 				CheckIn:     model.DateString("2023-07-01"),
 				CheckOut:    model.DateString("2023-07-05"),
 				Occupancies: model.OccupancyList(`invalid json`),
-				HotelIds:    model.IntegerList("[1,2,3]"),
+				HotelIds:    model.IntegerList("1,2,3"),
 			},
 			want:    client.SearchRequest{},
 			wantErr: true,
@@ -153,7 +153,7 @@ func TestSearchRequest_Transform(t *testing.T) {
 				CheckIn:     model.DateString("2023-07-01"),
 				CheckOut:    model.DateString("2023-07-05"),
 				Occupancies: model.OccupancyList(`[]`),
-				HotelIds:    model.IntegerList("[1,2,3]"),
+				HotelIds:    model.IntegerList("1,2,3"),
 			},
 			want: client.SearchRequest{
 				Stay: client.Stay{
@@ -173,7 +173,7 @@ func TestSearchRequest_Transform(t *testing.T) {
 				CheckIn:     model.DateString("2023-07-01"),
 				CheckOut:    model.DateString("2023-07-05"),
 				Occupancies: model.OccupancyList(`[{"Rooms":1,"Adults":2,"Children":1}]`),
-				HotelIds:    model.IntegerList("[]"),
+				HotelIds:    model.IntegerList(""),
 			},
 			want: client.SearchRequest{
 				Stay: client.Stay{

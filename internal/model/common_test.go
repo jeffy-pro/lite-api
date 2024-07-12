@@ -127,40 +127,58 @@ func TestDateString_Validate(t *testing.T) {
 
 func TestIntegerList_Parse(t *testing.T) {
 	tests := []struct {
-		name    string
-		i       IntegerList
-		want    []int
-		wantErr error
+		name     string
+		input    IntegerList
+		expected []int
+		wantErr  bool
 	}{
 		{
-			name:    "Valid integer list",
-			i:       IntegerList("[1,2,3]"),
-			want:    []int{1, 2, 3},
-			wantErr: nil,
+			name:     "Valid input",
+			input:    "129410,105360,106101,1762514",
+			expected: []int{129410, 105360, 106101, 1762514},
+			wantErr:  false,
 		},
 		{
-			name:    "Empty list",
-			i:       IntegerList("[]"),
-			want:    []int{},
-			wantErr: nil,
+			name:     "Empty input",
+			input:    "",
+			expected: nil,
+			wantErr:  false,
 		},
 		{
-			name:    "Single number",
-			i:       IntegerList("[42]"),
-			want:    []int{42},
-			wantErr: nil,
+			name:     "Single number",
+			input:    "42",
+			expected: []int{42},
+			wantErr:  false,
+		},
+		{
+			name:     "Whitespace",
+			input:    " 1, 2 , 3 ",
+			expected: []int{1, 2, 3},
+			wantErr:  false,
+		},
+		{
+			name:     "Invalid number",
+			input:    "1,2,3,abc,4",
+			expected: nil,
+			wantErr:  true,
+		},
+		{
+			name:     "Negative numbers",
+			input:    "-1,-2,-3,4",
+			expected: []int{-1, -2, -3, 4},
+			wantErr:  false,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := tt.i.Parse()
-			if tt.wantErr != nil {
-				assert.Equal(t, err, tt.wantErr)
+			got, err := tt.input.Parse()
+			if tt.wantErr {
+				assert.Error(t, err)
 				return
 			}
 
-			assert.Equal(t, tt.want, got)
+			assert.Equal(t, tt.expected, got)
 		})
 	}
 }

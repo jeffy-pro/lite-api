@@ -13,13 +13,13 @@ var ApiVersion = "1.0.0"
 
 // Hotel interfaces external HTTP and proxies the requests to Hotelbeds.
 type Hotel struct {
-	dtoService service.HotelService
+	hotelService service.HotelService
 }
 
 // NewHotel returns app configured with passed surveyService.
-func NewHotel(dtoService service.HotelService) *Hotel {
+func NewHotel(hotelService service.HotelService) *Hotel {
 	return &Hotel{
-		dtoService: dtoService,
+		hotelService: hotelService,
 	}
 }
 
@@ -63,7 +63,7 @@ func (h *Hotel) Search(c *gin.Context) {
 		return
 	}
 
-	resp, err := h.dtoService.Search(c, searchReq)
+	resp, err := h.hotelService.Search(c, searchReq)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

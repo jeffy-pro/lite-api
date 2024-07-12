@@ -3,6 +3,9 @@ package model
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -105,9 +108,17 @@ func (i IntegerList) String() string {
 
 // Parse converts the IntegerList to an array of integers
 func (i IntegerList) Parse() ([]int, error) {
-	nums := make([]int, 0)
-	if err := json.Unmarshal([]byte(i), &nums); err != nil {
-		return nil, err
+	strNums := strings.Split(i.String(), ",")
+
+	nums := make([]int, len(strNums))
+
+	// Convert each string to an integer
+	for i, strNum := range strNums {
+		num, err := strconv.Atoi(strings.TrimSpace(strNum))
+		if err != nil {
+			return nil, fmt.Errorf("error parsing number at index %d: %v", i, err)
+		}
+		nums[i] = num
 	}
 
 	return nums, nil
