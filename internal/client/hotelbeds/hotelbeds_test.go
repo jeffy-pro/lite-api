@@ -1,6 +1,7 @@
 package hotelbeds
 
 import (
+	"compress/gzip"
 	"context"
 	"crypto/sha256"
 	_ "embed"
@@ -83,7 +84,7 @@ func TestHotelBeds_Search(t *testing.T) {
 			reqHeader := r.Header.Get(headerXSignature)
 
 			require.Equal(t, out, reqHeader)
-			require.Equal(t, gzipAccept, r.Header.Get(headerAcceptEncoding))
+			require.Equal(t, gzipEncoding, r.Header.Get(headerAcceptEncoding))
 			require.Equal(t, applicationJSON, r.Header.Get(headerAccept))
 			require.Equal(t, apiKey, r.Header.Get(headerApiKey))
 			require.Equal(t, applicationJSON, r.Header.Get(headerContentType))
@@ -225,6 +226,34 @@ func TestHotelBeds_Search(t *testing.T) {
 
 			_, _ = fmt.Fprintln(w, string(hotelbedsResponse))
 			flusher.Flush()
+		}))
+
+		defer mockServer.Close()
+
+		hotelBedsCli := NewHotelBeds(mockServer.URL, apiKey, secret, staticClock)
+		res, err := hotelBedsCli.Search(context.Background(), client.SearchRequest{})
+		require.NoError(t, err)
+		require.Equal(t, upstreamResp, res)
+	})
+
+	t.Run("client success - gzip response", func(t *testing.T) {
+		var upstreamResp client.SearchResponse
+		require.NoError(t, json.Unmarshal(hotelbedsResponse, &upstreamResp))
+
+		mockServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if r.URL.Path != hotelsEndpoint {
+				t.Fail()
+				return
+			}
+
+			gz := gzip.NewWriter(w)
+			defer gz.Close()
+
+			w.Header().Set(headerContentEncoding, gzipEncoding)
+			w.Header().Set(headerContentType, applicationJSON)
+
+			_, err := gz.Write(hotelbedsResponse)
+			require.NoError(t, err)
 		}))
 
 		defer mockServer.Close()

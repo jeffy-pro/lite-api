@@ -2,12 +2,14 @@ package hotelbeds
 
 import (
 	"bytes"
+	"compress/gzip"
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"go.nhat.io/clock"
+	"io"
 	"lite-api/internal/client"
 	liteapierrors "lite-api/internal/errors"
 	"net/http"
@@ -15,14 +17,15 @@ import (
 )
 
 const (
-	hotelsEndpoint       = "/hotel-api/1.0/hotels"
-	headerXSignature     = "X-Signature"
-	headerApiKey         = "Api-key"
-	headerAccept         = "Accept"
-	headerAcceptEncoding = "Accept-Encoding"
-	headerContentType    = "Content-Type"
-	applicationJSON      = "application/json"
-	gzipAccept           = "gzip"
+	hotelsEndpoint        = "/hotel-api/1.0/hotels"
+	headerXSignature      = "X-Signature"
+	headerApiKey          = "Api-key"
+	headerAccept          = "Accept"
+	headerAcceptEncoding  = "Accept-Encoding"
+	headerContentType     = "Content-Type"
+	headerContentEncoding = "Content-Encoding"
+	applicationJSON       = "application/json"
+	gzipEncoding          = "gzip"
 )
 
 type HotelBeds struct {
@@ -62,7 +65,7 @@ func (h *HotelBeds) Search(ctx context.Context, searchReq client.SearchRequest) 
 
 	req.Header.Add(headerApiKey, h.apiKey)
 	req.Header.Add(headerAccept, applicationJSON)
-	req.Header.Add(headerAcceptEncoding, gzipAccept)
+	req.Header.Add(headerAcceptEncoding, gzipEncoding)
 	req.Header.Add(headerContentType, applicationJSON)
 
 	signature := h.sign()
@@ -73,12 +76,25 @@ func (h *HotelBeds) Search(ctx context.Context, searchReq client.SearchRequest) 
 		return client.SearchResponse{}, err
 	}
 
+	defer resp.Body.Close()
+
 	if resp.StatusCode != http.StatusOK {
 		return client.SearchResponse{}, h.handleErrors(resp)
 	}
 
-	var searchResp client.SearchResponse
-	decoder := json.NewDecoder(resp.Body)
+	var (
+		searchResp client.SearchResponse
+		reader     io.Reader = resp.Body
+	)
+
+	if resp.Header.Get(headerContentEncoding) == gzipEncoding {
+		reader, err = gzip.NewReader(resp.Body)
+		if err != nil {
+			return client.SearchResponse{}, err
+		}
+	}
+
+	decoder := json.NewDecoder(reader)
 	err = decoder.Decode(&searchResp)
 	if err != nil {
 		return client.SearchResponse{}, err
