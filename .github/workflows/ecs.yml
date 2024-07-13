@@ -37,8 +37,8 @@ jobs:
         run: |
           task docker:build
         env:
-          DOCKER_IMAGE=${{ secrets.ECR_REPOSITORY }}
-          TAG=${{ steps.fetch-tag.outputs.tag }}
+          DOCKER_IMAGE: ${{ secrets.ECR_REPOSITORY }}
+          TAG: ${{ steps.fetch-tag.outputs.tag }}
 
       - name: Push Docker image to ECR
         run: |
