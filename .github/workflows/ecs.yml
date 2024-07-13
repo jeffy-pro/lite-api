@@ -48,7 +48,7 @@ jobs:
 
       - name: Push Docker image to ECR
         run: |
-            docker push ${{ secrets.ECR_REPOSITORY }}:${{ github.ref }}
+            docker push ${{ secrets.ECR_REPOSITORY }}:${{ steps.fetch-tag.outputs.tag }}
 
       - name: Create ECS Task Definition
         run: |
