@@ -49,5 +49,16 @@ jobs:
 
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@v2.3.0
+        with:
+          args: >
+            -Dsonar.organization=jeffy-pro
+            -Dsonar.projectKey=lite-api
+            -Dsonar.sources=.
+            -Dsonar.exclusions=**/testdata/*
+            -Dsonar.coverage.exclusions=**/*_test.go,**/mock/*
+            -Dsonar.test.inclusions=**/*_test.go
+            -Dsonar.tests=.
+            -Dsonar.go.coverage.reportPaths=cover.out
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
