@@ -1,0 +1,27 @@
+version: '3'
+
+includes:
+  ci: ./Taskfile.ci.yml
+
+tasks:
+  fmt:
+    desc: Format Go code
+    cmds:
+      - go fmt ./...
+
+  test:
+    desc: Run tests
+    cmds:
+      - go test ./...
+
+  build:
+    desc: Build the Go binary
+    cmds:
+      - go build -o bin/app cmd/lite-api/main.go
+
+  tidy:
+    desc: Run all code tidying tasks
+    cmds:
+      - go mod tidy
+      - task: fmt
+      - task: ci:lint

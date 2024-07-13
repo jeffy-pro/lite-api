@@ -1,0 +1,11 @@
+version: '3'
+
+vars:
+  DOCKER_IMAGE: jeffy-mathew
+  DOCKER_TAG: lite-api
+
+tasks:
+  build:
+    desc: Build Docker image
+    cmds:
+      - docker buildx build --platform linux/arm64/v8,linux/amd64 -t {{.DOCKER_IMAGE}}:{{.DOCKER_TAG}} -f build/package/Dockerfile .

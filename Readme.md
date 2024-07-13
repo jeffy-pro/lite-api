@@ -63,6 +63,35 @@ export HOTELBEDS_API_KEY=<yourapikey>
 export HOTELBEDS_SECRET=<yoursecret>
 ./lite-api start
 ```
+## Taskfile Usage
+This project uses [Taskfile](https://taskfile.dev/) for managing various development and CI/CD tasks. The Taskfile is split into multiple files for better organization:
+
+[Taskfile.yml](Taskfile.yml): Main file that includes other Taskfiles and defines global variables.
+[Taskfile.dev.yml](scripts/Taskfile.dev.yml): Development-related tasks.
+[Taskfile.ci.yml](scripts/Taskfile.ci.yml): CI/CD-related tasks.
+[Taskfile.docker.yml](scripts/Taskfile.docker.yml): Docker-related tasks.
+
+To use [Taskfile](https://taskfile.dev/), make sure you have Task installed.
+### Common Tasks
+
+  * Format Go code: `task dev:fmt`
+  * Organize imports: `task dev:imports`
+  * Run tests: `task dev:test`
+  * Build the binary: `task dev:build`
+  * Run linter: `task ci:lint`
+  * Build Docker image: `task docker:build`
+  * Run all tasks (`lint`, `test`, `build`, `docker-build`): `task all`
+
+For a full list of available tasks, run:
+```bash
+task --list
+```
+To run a specific task from a namespace, use the format task `namespace:taskname`. 
+For example:
+
+  * `task dev:fmt`
+  * `task ci:lint`
+  * `task docker:build`
 
 ### Help
 For more information on available commands and their options, use the help command:

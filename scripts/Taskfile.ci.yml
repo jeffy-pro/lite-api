@@ -1,0 +1,14 @@
+version: '3'
+
+tasks:
+  install-deps:
+    desc: Install CI dependencies (golangci-lint and goimports)
+    cmds:
+      - go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+      - go install golang.org/x/tools/cmd/goimports@latest
+
+  lint:
+    desc: Run golangci-lint
+    cmds:
+      - golangci-lint run
+      - goimports -w .
