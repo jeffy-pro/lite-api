@@ -1,0 +1,53 @@
+name: CI Pipeline - Tests
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: Run Unit Tests
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: '1.22'
+
+      - name: Install Task
+        uses: arduino/setup-task@v2
+        with:
+          version: 3.x
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: lint
+        run: |
+         task tidy
+         
+         git diff HEAD > git-state.log
+         git_state_count=$(wc -l < git-state.log)
+        
+         if [[ $git_state_count -ne 0 ]]
+         then
+           echo "git-state<<EOF" >> $GITHUB_OUTPUT
+           cat git-state.log >> $GITHUB_OUTPUT
+           echo "EOF" >> $GITHUB_OUTPUT
+        
+           echo "task lint made git state dirty, please run task lint locally and update"
+           echo
+           cat git-state.log
+           exit 1
+         fi
+
+      - name: run tests
+        run: task dev:test
+
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@v2.3.0
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

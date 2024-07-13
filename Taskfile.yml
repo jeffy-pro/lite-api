@@ -10,6 +10,9 @@ vars:
   DOCKER_TAG: lite-api
 
 tasks:
+  lint:
+    cmds:
+      - task: dev:tidy
   all:
     desc: Run lint, test, build, and docker-build
     cmds:
