@@ -1,0 +1,79 @@
+name: CD Pipeline - Deploy to ECS Fargate
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [test]
+    name: Deploy to ECS Fargate
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::637423645336:role/ECS-EC2-ECR-FullAccess
+          aws-region: us-west-2
+
+      - name: Log in to Amazon ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build Docker image
+        run: |
+          task docker:build
+        env:
+          DOCKER_IMAGE=${{ secrets.ECR_REPOSITORY }}
+          TAG=${{ github.ref }}
+
+      - name: Push Docker image to ECR
+        run: |
+            docker push ${{ secrets.ECR_REPOSITORY }}:${{ github.ref }}
+
+      - name: Create ECS Task Definition
+        run: |
+          REPO_URI="${{ secrets.ECR_REPOSITORY }}"
+          TASK_DEFINITION=$(cat <<EOF
+          {
+          "family": "lite-app-task",
+          "networkMode": "awsvpc",
+          "requiresCompatibilities": ["FARGATE"],
+          "cpu": "256",
+          "memory": "512",
+          "containerDefinitions": [
+           {
+             "name": "lite-app",
+             "image": "$REPO_URI:latest",
+             "essential": true,
+             "portMappings": [
+               {
+                 "containerPort": 8080,
+                 "hostPort": 8080
+               }
+             ]
+           }
+          ]
+          }
+          EOF
+          )
+          echo "$TASK_DEFINITION" > taskdef.json
+
+      - name: Register ECS Task Definition
+        id: register-task
+        run: |
+          aws ecs register-task-definition --cli-input-json file://taskdef.json
+
+      - name: Update ECS Service
+        run: |
+          CLUSTER_NAME="lite-app-cluster"
+          SERVICE_NAME="lite-app-service"
+          TASK_FAMILY="lite-app-task"
+          TASK_REVISION=$(aws ecs describe-task-definition --task-definition $TASK_FAMILY --query "taskDefinition.revision" --output text)
+          NEW_TASK_DEFINITION="${TASK_FAMILY}:${TASK_REVISION}"
+          aws ecs update-service --cluster $CLUSTER_NAME --service $SERVICE_NAME --task-definition $NEW_TASK_DEFINITION --force-new-deployment
