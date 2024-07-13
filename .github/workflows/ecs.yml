@@ -30,7 +30,7 @@ jobs:
           task docker:build
         env:
           DOCKER_IMAGE=${{ secrets.ECR_REPOSITORY }}
-          TAG=${{ github.ref }}
+          TAG=${{ github.event.release.tag_name }}
 
       - name: Push Docker image to ECR
         run: |
@@ -39,6 +39,7 @@ jobs:
       - name: Create ECS Task Definition
         run: |
           REPO_URI="${{ secrets.ECR_REPOSITORY }}"
+          TAG=${{ github.event.release.tag_name }}
           TASK_DEFINITION=$(cat <<EOF
           {
           "family": "lite-app-task",
@@ -49,7 +50,7 @@ jobs:
           "containerDefinitions": [
            {
              "name": "lite-app",
-             "image": "$REPO_URI:latest",
+             "image": "$REPO_URI:$TAG",
              "essential": true,
              "portMappings": [
                {
