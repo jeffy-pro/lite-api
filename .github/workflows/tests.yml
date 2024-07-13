@@ -1,9 +1,7 @@
 name: CI Pipeline - Tests
 
 on:
-  push:
-    branches:
-      - '**'
+  workflow_call:
 
 jobs:
   test:
