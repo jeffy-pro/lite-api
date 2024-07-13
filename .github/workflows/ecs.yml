@@ -9,6 +9,12 @@ on:
         required: true
       AWS_SECRET_ACCESS_KEY:
         required: true
+      HOTELBEDS_API_KEY:
+        required: true
+      HOTELBEDS_SECRET:
+        required: true
+      HOTELBEDS_HOST:
+        required: true
 
 jobs:
   deploy-ecs:
@@ -16,8 +22,8 @@ jobs:
     name: Deploy to ECS Fargate
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: little-core-labs/get-git-tag@v3.0.1
+        id: fetch-tag
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -30,26 +36,6 @@ jobs:
         id: ecr-login
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Install Task
-        uses: arduino/setup-task@v2
-        with:
-          version: 3.x
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - uses: little-core-labs/get-git-tag@v3.0.1
-        id: fetch-tag
-
-      - name: Build Docker image
-        run: |
-          task docker:ci-build
-        env:
-          DOCKER_IMAGE: ${{ secrets.ECR_REPOSITORY }}
-          TAG: ${{ steps.fetch-tag.outputs.tag }}
-
-      - name: Push Docker image to ECR
-        run: |
-            docker push ${{ secrets.ECR_REPOSITORY }}:${{ steps.fetch-tag.outputs.tag }}
-
       - name: Create ECS Task Definition
         run: |
           REPO_URI="${{ secrets.ECR_REPOSITORY }}"
@@ -58,6 +44,21 @@ jobs:
           {
           "family": "lite-app-task",
           "networkMode": "awsvpc",
+          ExecutionRoleArn: arn:aws:iam::637423645336:role/ecsTaskExecutionRole
+          "environment": [
+                {
+                    "name": "HOTELBEDS_HOST",
+                    "value": "$HOTELBEDS_HOST"
+                },
+                {
+                    "name": "HOTELBEDS_API_KEY",
+                    "value": "$HOTELBEDS_API_KEY"
+                },
+                {
+                    "name": "HOTELBEDS_SECRET",
+                    "value": "$HOTELBEDS_SECRET"
+                }
+            ]
           "requiresCompatibilities": ["FARGATE"],
           "cpu": "256",
           "memory": "512",
