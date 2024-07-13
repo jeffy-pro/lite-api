@@ -52,7 +52,7 @@ jobs:
         with:
           args: >
             -Dsonar.organization=jeffy-pro
-            -Dsonar.projectKey=lite-api
+            -Dsonar.projectKey=jeffy-pro_lite-api
             -Dsonar.sources=.
             -Dsonar.exclusions=**/testdata/*
             -Dsonar.coverage.exclusions=**/*_test.go,**/mock/*
