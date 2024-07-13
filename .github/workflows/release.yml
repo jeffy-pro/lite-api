@@ -1,4 +1,4 @@
-name: Run CI tests
+name: Release
 
 on:
   push:
@@ -13,7 +13,7 @@ jobs:
       GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
   build-docker:
-    uses: ./github.com/workflows/build.yml
+    uses: ./.github/workflows/build.yml
     secrets:
       ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
