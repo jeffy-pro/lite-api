@@ -27,7 +27,7 @@ jobs:
 
       - name: lint
         run: |
-         task tidy
+         task lint
          
          git diff HEAD > git-state.log
          git_state_count=$(wc -l < git-state.log)
