@@ -9,7 +9,6 @@ import (
 var (
 	ErrSameDayCheckInAndOut = errors.New("same day check in and out is not allowed")
 	ErrCheckInAfterCheckOut = errors.New("check in after check out is not allowed")
-	ErrEmptyHotelIds        = errors.New("empty hotel ids")
 )
 
 // SearchRequest is the request struct to bind the HTTP request to.
@@ -56,7 +55,7 @@ func (s *SearchRequest) Validate() error {
 	}
 
 	if len(hotelIds) == 0 {
-		return ErrEmptyHotelIds
+		return model.ErrEmptyHotelIds
 	}
 
 	occupancies, err := s.Occupancies.Parse()

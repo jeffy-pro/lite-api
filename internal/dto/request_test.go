@@ -74,7 +74,7 @@ func TestSearchRequest_Validate(t *testing.T) {
 				GuestNationality: model.Country("US"),
 				HotelIds:         model.IntegerList(""),
 			},
-			wantErr: ErrEmptyHotelIds,
+			wantErr: model.ErrEmptyHotelIds,
 		},
 		{
 			name: "Invalid Occupancies",
@@ -182,11 +182,9 @@ func TestSearchRequest_Transform(t *testing.T) {
 					CheckOut: "2023-07-05",
 				},
 				Occupancies: model.Occupancies{{Rooms: 1, Adults: 2, Children: 1}},
-				Hotels: client.HotelIds{
-					Hotel: []int{},
-				},
+				Hotels:      client.HotelIds{Hotel: nil},
 			},
-			wantErr: false,
+			wantErr: true,
 		},
 	}
 

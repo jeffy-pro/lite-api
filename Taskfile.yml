@@ -1,0 +1,51 @@
+version: '3'
+
+vars:
+  DOCKER_IMAGE: jeffy-mathew
+  DOCKER_TAG: lite-api
+
+tasks:
+  fmt:
+    desc: Format Go code
+    cmds:
+      - go fmt ./...
+
+  imports:
+    desc: Organize imports
+    cmds:
+      - goimports -w .
+
+  lint:
+    desc: Run golangci-lint
+    cmds:
+      - golangci-lint run
+
+  test:
+    desc: Run tests
+    cmds:
+      - go test ./...
+
+  build:
+    desc: Build the Go binary
+    cmds:
+      - go build -o bin/app cmd/lite-api/main.go
+
+  docker-build:
+    desc: Build Docker image
+    cmds:
+      - docker build -t {{.DOCKER_IMAGE}}:{{.DOCKER_TAG}} -f build/package/Dockerfile .
+
+  tidy:
+    desc: Run all code tidying tasks
+    cmds:
+      - task: fmt
+      - task: imports
+      - task: lint
+
+  all:
+    desc: Run lint, test, build, and docker-build
+    cmds:
+      - task: lint
+      - task: test
+      - task: build
+      - task: docker-build

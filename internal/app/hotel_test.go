@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -42,10 +43,13 @@ func buildQueryFromSearch(tb testing.TB, currency model.Currency, guestNationali
 	}
 
 	if len(q.Hotels.Hotel) > 0 {
-		hotelIds, err := json.Marshal(q.Hotels.Hotel)
-		require.NoError(tb, err)
+		hotelIds := make([]string, len(q.Hotels.Hotel))
+		for i, hotelId := range q.Hotels.Hotel {
+			hotelIds[i] = strconv.Itoa(hotelId)
+		}
+		hotelIdsStr := strings.Join(hotelIds, ",")
 		query.WriteString("hotelIds=")
-		query.Write(bytes.TrimSpace(hotelIds))
+		query.WriteString(hotelIdsStr)
 		query.WriteString("&")
 	}
 

@@ -16,6 +16,7 @@ var (
 	ErrMinOneAdultRequired = errors.New("at least one adult is required")
 	ErrNegativeValue       = errors.New("negative value not allowed")
 	ErrEmptyOccupancies    = errors.New("empty occupancies")
+	ErrEmptyHotelIds       = errors.New("empty hotel ids")
 )
 
 var (
@@ -109,6 +110,14 @@ func (i IntegerList) String() string {
 // Parse converts the IntegerList to an array of integers
 func (i IntegerList) Parse() ([]int, error) {
 	strNums := strings.Split(i.String(), ",")
+
+	if len(strNums) == 0 {
+		return nil, ErrEmptyHotelIds
+	}
+
+	if len(strNums) == 1 && strNums[0] == "" {
+		return nil, ErrEmptyHotelIds
+	}
 
 	nums := make([]int, len(strNums))
 
