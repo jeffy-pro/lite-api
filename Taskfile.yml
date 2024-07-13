@@ -12,6 +12,7 @@ vars:
 tasks:
   lint:
     cmds:
+      - task: ci:install-deps
       - task: dev:tidy
   all:
     desc: Run lint, test, build, and docker-build
