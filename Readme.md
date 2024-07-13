@@ -2,6 +2,8 @@
 
 Lite-API is a Go application that proxies requests to the Hotelbeds hotels availability [endpoint](https://developer.hotelbeds.com/documentation/hotels/booking-api/api-referenhttps://developer.hotelbeds.com/documentation/hotels/booking-api/api-reference/#tag/Availability), providing a convenient way to interact with Hotelbeds API via a local proxy server.
 
+Postman collection can be found [here](./api/LiteAPI_Supplier_API_Test.postman_collection.json).
+
 ## Features
 
 - **Proxying to Hotelbeds API**: Routes requests to Hotelbeds hotels search endpoint.
@@ -69,4 +71,4 @@ For more information on available commands and their options, use the help comma
 Contributions are welcome! If you find any issues or have suggestions, please open an issue or a pull request on GitHub.
 
 ## License
-This project is licensed under the MIT License. See the LICENSE file for details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
