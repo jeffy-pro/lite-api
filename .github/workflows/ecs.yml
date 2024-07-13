@@ -1,17 +1,14 @@
-name: CD Pipeline - Deploy to ECS Fargate
+name: Deploy ECS
 
 on:
-  push:
-    tags:
-      - 'v*'
+  workflow_call:
+    secrets:
+      ECR_REPOSITORY:
+        required: true
 
 jobs:
-  ci-tests:
-    uses: ./.github/workflows/tests.yml
-
-  deploy:
+  deploy-ecs:
     runs-on: ubuntu-latest
-    needs: [ci-tests]
     name: Deploy to ECS Fargate
 
     steps:

@@ -1,0 +1,14 @@
+name: Run CI tests
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  ci-tests:
+    uses: ./.github/workflows/tests.yml
+
+  ecs:
+    needs: [ci-tests]
+    uses: ./.github/workflows/ecs.yml
