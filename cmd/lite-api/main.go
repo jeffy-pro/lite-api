@@ -63,8 +63,8 @@ func serve(ctx context.Context, appPort string, hotel *app.Hotel) {
 func start(appPort, hotelbedsHost, hotelbedsApiKey, hotelbedsSecret string) {
 	realClock := clock.New()
 	hotelbedsClient := hotelbeds.NewHotelBeds(hotelbedsHost, hotelbedsApiKey, hotelbedsSecret, realClock)
-	hotelbedsService := hotel.NewHotelService(hotelbedsClient)
-	app := app.NewHotel(hotelbedsService)
+	hotelsService := hotel.NewHotelService(hotelbedsClient)
+	hotelApp := app.NewHotel(hotelsService)
 
 	defer func() {
 		if err := recover(); err != nil {
@@ -82,7 +82,7 @@ func start(appPort, hotelbedsHost, hotelbedsApiKey, hotelbedsSecret string) {
 		cancel()
 	}()
 
-	serve(ctx, appPort, app)
+	serve(ctx, appPort, hotelApp)
 }
 
 // main initiates new app from argument receiver over cli args or env and calls serve to start the server
