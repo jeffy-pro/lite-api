@@ -8,7 +8,12 @@ on:
 jobs:
   ci-tests:
     uses: ./.github/workflows/tests.yml
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
   ecs:
     needs: [ci-tests]
     uses: ./.github/workflows/ecs.yml
+    secrets:
+      ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}

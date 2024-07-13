@@ -11,3 +11,6 @@ on:
 jobs:
   ci-tests:
     uses: ./.github/workflows/tests.yml
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
