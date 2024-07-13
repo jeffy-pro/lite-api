@@ -1,10 +1,11 @@
 package app
 
 import (
-	"github.com/gin-gonic/gin"
 	"lite-api/internal/dto"
 	"lite-api/internal/service"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 // ApiVersion stores the API version information.

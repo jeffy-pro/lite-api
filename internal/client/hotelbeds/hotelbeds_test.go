@@ -8,14 +8,15 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"github.com/stretchr/testify/require"
-	"go.nhat.io/clock"
 	"lite-api/internal/client"
 	liteapierrors "lite-api/internal/errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/require"
+	"go.nhat.io/clock"
 )
 
 //go:embed testdata/hotelbeds_response.json

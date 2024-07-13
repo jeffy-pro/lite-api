@@ -1,11 +1,12 @@
 package dto
 
 import (
-	"github.com/stretchr/testify/require"
 	"lite-api/internal/client"
 	"lite-api/internal/model"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestSearchRequest_Validate(t *testing.T) {

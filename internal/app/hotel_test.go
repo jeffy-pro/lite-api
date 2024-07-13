@@ -3,9 +3,6 @@ package app
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
-	"go.uber.org/mock/gomock"
 	"io"
 	"lite-api/internal/client"
 	"lite-api/internal/dto"
@@ -17,6 +14,10 @@ import (
 	"net/url"
 	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	"go.uber.org/mock/gomock"
 )
 
 func setup(tb testing.TB, hotelService service.HotelService) http.Handler {

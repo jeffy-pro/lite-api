@@ -5,9 +5,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
-	"go.nhat.io/clock"
 	"lite-api/internal/app"
 	"lite-api/internal/client/hotelbeds"
 	"lite-api/internal/service/hotel"
@@ -17,6 +14,10 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+	"go.nhat.io/clock"
 )
 
 const (
