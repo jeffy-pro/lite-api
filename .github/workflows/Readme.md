@@ -44,6 +44,6 @@ This workflow is triggered when a new version tag is pushed. It first runs all t
 
 Make sure to configure the necessary secrets and environment variables in your GitHub repository settings for the ECS and EC2 deployment jobs.
 
-## Contributing
-
-When adding new jobs or modifying existing ones, please update this README to reflect the changes in the workflow.
+## Note
+The implementation on AWS deployment is not complete. 
+This Readme describes the CI/CD architecture.

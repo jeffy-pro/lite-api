@@ -30,3 +30,14 @@ jobs:
       HOTELBEDS_API_KEY: ${{ secrets.HOTELBEDS_API_KEY }}
       HOTELBEDS_SECRET: ${{ secrets.HOTELBEDS_SECRET }}
       HOTELBEDS_HOST: ${{ secrets.HOTELBEDS_HOST }}
+
+  ec2:
+    needs: [ build-docker ]
+    uses: ./.github/workflows/ec2.yml
+    secrets:
+      ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      HOTELBEDS_API_KEY: ${{ secrets.HOTELBEDS_API_KEY }}
+      HOTELBEDS_SECRET: ${{ secrets.HOTELBEDS_SECRET }}
+      HOTELBEDS_HOST: ${{ secrets.HOTELBEDS_HOST }}

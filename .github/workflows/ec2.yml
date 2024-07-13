@@ -1,4 +1,4 @@
-name: Deploy ECS
+name: Deploy to EC2 Auto Scaling Group
 
 on:
   workflow_call:
@@ -15,15 +15,15 @@ on:
         required: true
       HOTELBEDS_HOST:
         required: true
-
 jobs:
-  deploy-ecs:
+  deploy:
     runs-on: ubuntu-latest
-    name: Deploy to ECS Fargate
+    needs: [test]
+    name: Deploy to EC2 Auto Scaling Group
 
     steps:
-      - uses: little-core-labs/get-git-tag@v3.0.1
-        id: fetch-tag
+      - name: Checkout code
+        uses: actions/checkout@v3
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -36,12 +36,7 @@ jobs:
         id: ecr-login
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Update ECS Service
+      - name: Update EC2 Instances
         run: |
-          echo "to complete implementation"
-#          CLUSTER_NAME="lite-api"
-#          SERVICE_NAME="lite-app"
-#          TASK_FAMILY="lite-app-task"
-#          TASK_REVISION=$(aws ecs describe-task-definition --task-definition $TASK_FAMILY --query "taskDefinition.revision" --output text)
-#          NEW_TASK_DEFINITION="${TASK_FAMILY}:${TASK_REVISION}"
-#          aws ecs update-service --cluster $CLUSTER_NAME --service $SERVICE_NAME --task-definition $NEW_TASK_DEFINITION --force-new-deployment
+          echo("to do")
+          

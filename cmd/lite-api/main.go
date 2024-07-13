@@ -12,8 +12,11 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
+
+	"github.com/gin-gonic/gin"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -27,6 +30,8 @@ const (
 	defaultHotelbedsHost = "https://api.test.hotelbeds.com"
 	hotelbedsApiKeyEnv   = "HOTELBEDS_API_KEY"
 	hotelbedsSecretEnv   = "HOTELBEDS_SECRET"
+	appModeEnv           = "MODE"
+	defaultAppMode       = "dev"
 )
 
 // serve handles the logic of running  server in a goroutine and waiting for signal to gracefully stop the server
@@ -60,11 +65,15 @@ func serve(ctx context.Context, appPort string, hotel *app.Hotel) {
 	log.Println("application stopped accepting requests")
 }
 
-func start(appPort, hotelbedsHost, hotelbedsApiKey, hotelbedsSecret string) {
+func start(appPort, appMode, hotelbedsHost, hotelbedsApiKey, hotelbedsSecret string) {
 	realClock := clock.New()
 	hotelbedsClient := hotelbeds.NewHotelBeds(hotelbedsHost, hotelbedsApiKey, hotelbedsSecret, realClock)
 	hotelsService := hotel.NewHotelService(hotelbedsClient)
 	hotelApp := app.NewHotel(hotelsService)
+
+	if strings.ToLower(appMode) == "prod" {
+		gin.SetMode(gin.ReleaseMode)
+	}
 
 	defer func() {
 		if err := recover(); err != nil {
@@ -92,6 +101,7 @@ func start(appPort, hotelbedsHost, hotelbedsApiKey, hotelbedsSecret string) {
 func main() {
 	var (
 		appPort         string
+		appMode         string
 		hotelbedsHost   string
 		hotelbedsApiKey string
 		hotelbedsSecret string
@@ -116,22 +126,25 @@ func main() {
 		Run: func(cmd *cobra.Command, args []string) {
 			// Get values from command line flags or environment variables
 			appPort = viper.GetString(appPortEnv)
+			appMode = viper.GetString(appModeEnv)
 			hotelbedsHost = viper.GetString(hotelbedsHostEnv)
 			hotelbedsApiKey = viper.GetString(hotelbedsApiKeyEnv)
 			hotelbedsSecret = viper.GetString(hotelbedsSecretEnv)
 
-			start(appPort, hotelbedsHost, hotelbedsApiKey, hotelbedsSecret)
+			start(appPort, appMode, hotelbedsHost, hotelbedsApiKey, hotelbedsSecret)
 		},
 	}
 
 	// Bind command line flags
 	startCmd.Flags().StringVarP(&appPort, "port", "p", defaultAppPort, "Application port")
+	startCmd.Flags().StringVarP(&appMode, "mode", "m", defaultAppMode, "Application mode")
 	startCmd.Flags().StringVarP(&hotelbedsHost, "host", "o", defaultHotelbedsHost, "Hotelbeds API host")
 	startCmd.Flags().StringVarP(&hotelbedsApiKey, "apikey", "k", "", "Hotelbeds API key")
 	startCmd.Flags().StringVarP(&hotelbedsSecret, "secret", "s", "", "Hotelbeds API secret")
 
 	// Bind flags with viper
 	_ = viper.BindPFlag(appPortEnv, startCmd.Flags().Lookup("port"))
+	_ = viper.BindPFlag(appModeEnv, startCmd.Flags().Lookup("mode"))
 	_ = viper.BindPFlag(hotelbedsHostEnv, startCmd.Flags().Lookup("host"))
 	_ = viper.BindPFlag(hotelbedsApiKeyEnv, startCmd.Flags().Lookup("apikey"))
 	_ = viper.BindPFlag(hotelbedsSecretEnv, startCmd.Flags().Lookup("secret"))
