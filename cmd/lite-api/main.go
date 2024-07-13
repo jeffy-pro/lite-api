@@ -104,10 +104,10 @@ func main() {
 	viper.SetDefault(appPortEnv, defaultAppPort)
 	viper.SetDefault(hotelbedsHostEnv, defaultHotelbedsHost)
 	// Load from environment variables
-	viper.BindEnv(appPortEnv)
-	viper.BindEnv(hotelbedsHostEnv)
-	viper.BindEnv(hotelbedsApiKeyEnv)
-	viper.BindEnv(hotelbedsSecretEnv)
+	_ = viper.BindEnv(appPortEnv)
+	_ = viper.BindEnv(hotelbedsHostEnv)
+	_ = viper.BindEnv(hotelbedsApiKeyEnv)
+	_ = viper.BindEnv(hotelbedsSecretEnv)
 
 	// Create start command
 	var startCmd = &cobra.Command{
@@ -131,10 +131,10 @@ func main() {
 	startCmd.Flags().StringVarP(&hotelbedsSecret, "secret", "s", "", "Hotelbeds API secret")
 
 	// Bind flags with viper
-	viper.BindPFlag(appPortEnv, startCmd.Flags().Lookup("port"))
-	viper.BindPFlag(hotelbedsHostEnv, startCmd.Flags().Lookup("host"))
-	viper.BindPFlag(hotelbedsApiKeyEnv, startCmd.Flags().Lookup("apikey"))
-	viper.BindPFlag(hotelbedsSecretEnv, startCmd.Flags().Lookup("secret"))
+	_ = viper.BindPFlag(appPortEnv, startCmd.Flags().Lookup("port"))
+	_ = viper.BindPFlag(hotelbedsHostEnv, startCmd.Flags().Lookup("host"))
+	_ = viper.BindPFlag(hotelbedsApiKeyEnv, startCmd.Flags().Lookup("apikey"))
+	_ = viper.BindPFlag(hotelbedsSecretEnv, startCmd.Flags().Lookup("secret"))
 
 	// Create root command
 	var rootCmd = &cobra.Command{Use: "lite-api"}

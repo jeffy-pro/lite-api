@@ -77,7 +77,9 @@ func (h *HotelBeds) Search(ctx context.Context, searchReq client.SearchRequest) 
 		return client.SearchResponse{}, err
 	}
 
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	if resp.StatusCode != http.StatusOK {
 		return client.SearchResponse{}, h.handleErrors(resp)
