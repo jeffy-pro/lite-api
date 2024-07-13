@@ -30,12 +30,15 @@ jobs:
         id: ecr-login
         uses: aws-actions/amazon-ecr-login@v1
 
+      - uses: little-core-labs/get-git-tag@v3.0.1
+        id: fetch-tag
+
       - name: Build Docker image
         run: |
           task docker:build
         env:
           DOCKER_IMAGE=${{ secrets.ECR_REPOSITORY }}
-          TAG=${{ github.event.release.tag_name }}
+          TAG=${{ steps.fetch-tag.outputs.tag }}
 
       - name: Push Docker image to ECR
         run: |
@@ -44,7 +47,7 @@ jobs:
       - name: Create ECS Task Definition
         run: |
           REPO_URI="${{ secrets.ECR_REPOSITORY }}"
-          TAG=${{ github.event.release.tag_name }}
+          TAG=${{ steps.fetch-tag.outputs.tag }}
           TASK_DEFINITION=$(cat <<EOF
           {
           "family": "lite-app-task",
