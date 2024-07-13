@@ -41,7 +41,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          task docker:build
+          task docker:ci-build
         env:
           DOCKER_IMAGE: ${{ secrets.ECR_REPOSITORY }}
           TAG: ${{ steps.fetch-tag.outputs.tag }}
