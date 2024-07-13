@@ -44,7 +44,7 @@ jobs:
           {
           "family": "lite-app-task",
           "networkMode": "awsvpc",
-          ExecutionRoleArn: arn:aws:iam::637423645336:role/ecsTaskExecutionRole
+          "ExecutionRoleArn": "arn:aws:iam::637423645336:role/ecsTaskExecutionRole",
           "environment": [
                 {
                     "name": "HOTELBEDS_HOST",
