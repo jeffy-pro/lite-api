@@ -48,7 +48,7 @@ jobs:
 
       - name: Push Docker image to ECR
         run: |
-            docker push ${{ secrets.ECR_REPOSITORY }}:${{ steps.fetch-tag.outputs.tag }}
+            docker push 637423645336.dkr.ecr.us-west-2.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:${{ steps.fetch-tag.outputs.tag }}
 
       - name: Create ECS Task Definition
         run: |
