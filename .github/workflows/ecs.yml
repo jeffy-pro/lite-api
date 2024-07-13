@@ -39,45 +39,42 @@ jobs:
       - name: Create ECS Task Definition
         run: |
           REPO_URI="${{ secrets.ECR_REPOSITORY }}"
-          TAG=${{ steps.fetch-tag.outputs.tag }}
-          TASK_DEFINITION=$(cat <<EOF
-          {
-          "family": "lite-app-task",
-          "networkMode": "awsvpc",
-          "ExecutionRoleArn": "arn:aws:iam::637423645336:role/ecsTaskExecutionRole",
-          "environment": [
-                {
+          TAG="${{ steps.fetch-tag.outputs.tag }}"
+          TASK_DEFINITION='{
+            "family": "lite-app-task",
+            "networkMode": "awsvpc",
+            "executionRoleArn": "arn:aws:iam::637423645336:role/ecsTaskExecutionRole",
+            "requiresCompatibilities": ["FARGATE"],
+            "cpu": "256",
+            "memory": "512",
+            "containerDefinitions": [
+              {
+                "name": "lite-app",
+                "image": "'"$REPO_URI:$TAG"'",
+                "essential": true,
+                "portMappings": [
+                  {
+                    "containerPort": 8080,
+                    "hostPort": 8080
+                  }
+                ],
+                "environment": [
+                  {
                     "name": "HOTELBEDS_HOST",
-                    "value": "$HOTELBEDS_HOST"
-                },
-                {
+                    "value": "'"$HOTELBEDS_HOST"'"
+                  },
+                  {
                     "name": "HOTELBEDS_API_KEY",
-                    "value": "$HOTELBEDS_API_KEY"
-                },
-                {
+                    "value": "'"$HOTELBEDS_API_KEY"'"
+                  },
+                  {
                     "name": "HOTELBEDS_SECRET",
-                    "value": "$HOTELBEDS_SECRET"
-                }
+                    "value": "'"$HOTELBEDS_SECRET"'"
+                  }
+                ]
+              }
             ]
-          "requiresCompatibilities": ["FARGATE"],
-          "cpu": "256",
-          "memory": "512",
-          "containerDefinitions": [
-           {
-             "name": "lite-app",
-             "image": "$REPO_URI:$TAG",
-             "essential": true,
-             "portMappings": [
-               {
-                 "containerPort": 8080,
-                 "hostPort": 8080
-               }
-             ]
-           }
-          ]
-          }
-          EOF
-          )
+          }'
           echo "$TASK_DEFINITION" > taskdef.json
 
       - name: Register ECS Task Definition
