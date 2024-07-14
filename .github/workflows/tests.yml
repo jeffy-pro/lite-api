@@ -57,7 +57,7 @@ jobs:
             -Dsonar.organization=jeffy-pro
             -Dsonar.projectKey=jeffy-pro_lite-api
             -Dsonar.sources=.
-            -Dsonar.exclusions=**/testdata/*
+            -Dsonar.exclusions=**/testdata/*,scripts,api
             -Dsonar.coverage.exclusions=**/*_test.go,**/mock/*
             -Dsonar.test.inclusions=**/*_test.go
             -Dsonar.tests=.
