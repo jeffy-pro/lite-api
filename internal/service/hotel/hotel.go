@@ -5,17 +5,20 @@ import (
 	"encoding/json"
 	"lite-api/internal/client"
 	"lite-api/internal/dto"
+	"log/slog"
 	"strconv"
 )
 
 // HotelS does the transformation from lite API request and search on Hotelbeds.
 type HotelS struct {
-	cli client.HotelBeds
+	cli    client.HotelBeds
+	logger *slog.Logger
 }
 
-func NewHotelService(cli client.HotelBeds) *HotelS {
+func NewHotelService(cli client.HotelBeds, logger *slog.Logger) *HotelS {
 	return &HotelS{
-		cli: cli,
+		cli:    cli,
+		logger: logger,
 	}
 }
 

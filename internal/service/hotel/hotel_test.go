@@ -4,7 +4,6 @@ import (
 	"context"
 	_ "embed"
 	"encoding/json"
-	"fmt"
 	"lite-api/internal/client"
 	hotelbedsmock "lite-api/internal/client/mock"
 	"lite-api/internal/dto"
@@ -20,7 +19,7 @@ var hotelbedsResponse []byte
 
 func TestHotel_Search(t *testing.T) {
 	t.Run("transformation failure", func(t *testing.T) {
-		hotelService := NewHotelService(nil)
+		hotelService := NewHotelService(nil, nil)
 		res, err := hotelService.Search(context.Background(), dto.SearchRequest{
 			Occupancies: "[",
 		})
@@ -43,7 +42,7 @@ func TestHotel_Search(t *testing.T) {
 		cliSearchReq, err := searchReq.Transform()
 		require.NoError(t, err)
 		cliMock.EXPECT().Search(context.Background(), cliSearchReq).Return(client.SearchResponse{}, assert.AnError)
-		hotelService := NewHotelService(cliMock)
+		hotelService := NewHotelService(cliMock, nil)
 		res, err := hotelService.Search(context.Background(), searchReq)
 		require.ErrorIs(t, err, assert.AnError)
 		require.Zero(t, res)
@@ -68,7 +67,7 @@ func TestHotel_Search(t *testing.T) {
 			var cliResp client.SearchResponse
 			require.NoError(t, json.Unmarshal(hotelbedsResponse, &cliResp))
 			cliMock.EXPECT().Search(context.Background(), cliSearchReq).Return(cliResp, nil)
-			hotelService := NewHotelService(cliMock)
+			hotelService := NewHotelService(cliMock, nil)
 			res, err := hotelService.Search(context.Background(), searchReq)
 			require.NoError(t, err)
 
@@ -107,7 +106,7 @@ func TestHotel_Search(t *testing.T) {
 			require.NoError(t, json.Unmarshal(hotelbedsResponse, &cliResp))
 			cliResp.Hotels.Hotels[1].MinRate = "invalid rate"
 			cliMock.EXPECT().Search(context.Background(), cliSearchReq).Return(cliResp, nil)
-			hotelService := NewHotelService(cliMock)
+			hotelService := NewHotelService(cliMock, nil)
 			res, err := hotelService.Search(context.Background(), searchReq)
 			require.NoError(t, err)
 
@@ -141,7 +140,7 @@ func TestHotel_Search(t *testing.T) {
 			var cliResp client.SearchResponse
 			require.NoError(t, json.Unmarshal(hotelbedsResponse, &cliResp))
 			cliMock.EXPECT().Search(context.Background(), cliSearchReq).Return(cliResp, nil)
-			hotelService := NewHotelService(cliMock)
+			hotelService := NewHotelService(cliMock, nil)
 			res, err := hotelService.Search(context.Background(), searchReq)
 			require.NoError(t, err)
 
@@ -176,16 +175,4 @@ func TestHotel_Search(t *testing.T) {
 
 		})
 	})
-}
-
-func uintSliceToJSONRawMessage(tb testing.TB, slice []byte) (json.RawMessage, error) {
-	tb.Helper()
-	// Marshal the []uint to JSON
-	jsonBytes, err := json.Marshal(slice)
-	if err != nil {
-		return nil, fmt.Errorf("error marshaling slice: %w", err)
-	}
-
-	// Convert the JSON bytes to json.RawMessage
-	return json.RawMessage(jsonBytes), nil
 }

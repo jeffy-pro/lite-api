@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"log/slog"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -11,8 +12,8 @@ import (
 
 func TestCreateStartCmdHandler(t *testing.T) {
 	t.Run("Successful command creation", func(t *testing.T) {
-		mockStart := func(appPort, appMode, hotelbedsHost, hotelbedsApiKey, hotelbedsSecret string) {}
-		cmd, err := CreateStartCmdHandler(mockStart)
+		mockStart := func(appPort, appMode, hotelbedsHost, hotelbedsApiKey, hotelbedsSecret string, logger *slog.Logger) {}
+		cmd, err := CreateStartCmdHandler(mockStart, nil)
 
 		require.NoError(t, err)
 		require.NotNil(t, cmd)
@@ -21,8 +22,8 @@ func TestCreateStartCmdHandler(t *testing.T) {
 	})
 
 	t.Run("Flag bindings", func(t *testing.T) {
-		mockStart := func(appPort, appMode, hotelbedsHost, hotelbedsApiKey, hotelbedsSecret string) {}
-		cmd, err := CreateStartCmdHandler(mockStart)
+		mockStart := func(appPort, appMode, hotelbedsHost, hotelbedsApiKey, hotelbedsSecret string, logger *slog.Logger) {}
+		cmd, err := CreateStartCmdHandler(mockStart, nil)
 
 		require.NoError(t, err)
 		require.NotNil(t, cmd)
@@ -36,31 +37,31 @@ func TestCreateStartCmdHandler(t *testing.T) {
 
 	t.Run("Viper bindings", func(t *testing.T) {
 		viper.Reset()
-		mockStart := func(appPort, appMode, hotelbedsHost, hotelbedsApiKey, hotelbedsSecret string) {}
-		cmd, err := CreateStartCmdHandler(mockStart)
+		mockStart := func(appPort, appMode, hotelbedsHost, hotelbedsApiKey, hotelbedsSecret string, logger *slog.Logger) {}
+		cmd, err := CreateStartCmdHandler(mockStart, nil)
 
 		require.NoError(t, err)
 		require.NotNil(t, cmd)
 
-		require.NotNil(t, viper.GetString(appPortEnv))
-		require.NotNil(t, viper.GetString(appModeEnv))
-		require.NotNil(t, viper.GetString(hotelbedsHostEnv))
-		require.NotNil(t, viper.GetString(hotelbedsApiKeyEnv))
-		require.NotNil(t, viper.GetString(hotelbedsSecretEnv))
+		require.NotNil(t, viper.GetString(AppPortEnv))
+		require.NotNil(t, viper.GetString(AppModeEnv))
+		require.NotNil(t, viper.GetString(HotelbedsHostEnv))
+		require.NotNil(t, viper.GetString(HotelbedsApiKeyEnv))
+		require.NotNil(t, viper.GetString(HotelbedsSecretEnv))
 	})
 
 	t.Run("Command execution", func(t *testing.T) {
 		var executedStart bool
-		mockStart := func(appPort, appMode, hotelbedsHost, hotelbedsApiKey, hotelbedsSecret string) {
+		mockStart := func(appPort, appMode, hotelbedsHost, hotelbedsApiKey, hotelbedsSecret string, logger *slog.Logger) {
 			executedStart = true
-			require.Equal(t, defaultAppPort, appPort)
-			require.Equal(t, defaultAppMode, appMode)
-			require.Equal(t, defaultHotelbedsHost, hotelbedsHost)
+			require.Equal(t, DefaultAppPort, appPort)
+			require.Equal(t, DefaultAppMode, appMode)
+			require.Equal(t, DefaultHotelbedsHost, hotelbedsHost)
 			require.Empty(t, hotelbedsApiKey)
 			require.Empty(t, hotelbedsSecret)
 		}
 
-		cmd, err := CreateStartCmdHandler(mockStart)
+		cmd, err := CreateStartCmdHandler(mockStart, nil)
 		require.NoError(t, err)
 		require.NotNil(t, cmd)
 
@@ -71,7 +72,7 @@ func TestCreateStartCmdHandler(t *testing.T) {
 
 	t.Run("Command execution with flags", func(t *testing.T) {
 		var executedStart bool
-		mockStart := func(appPort, appMode, hotelbedsHost, hotelbedsApiKey, hotelbedsSecret string) {
+		mockStart := func(appPort, appMode, hotelbedsHost, hotelbedsApiKey, hotelbedsSecret string, logger *slog.Logger) {
 			executedStart = true
 			require.Equal(t, "8080", appPort)
 			require.Equal(t, "test", appMode)
@@ -80,7 +81,7 @@ func TestCreateStartCmdHandler(t *testing.T) {
 			require.Equal(t, "testsecret", hotelbedsSecret)
 		}
 
-		cmd, err := CreateStartCmdHandler(mockStart)
+		cmd, err := CreateStartCmdHandler(mockStart, nil)
 		require.NoError(t, err)
 		require.NotNil(t, cmd)
 

@@ -3,14 +3,15 @@ package cli
 import "github.com/spf13/viper"
 
 const (
-	appPortEnv           = "APP_PORT"
-	defaultAppPort       = ":8080"
-	hotelbedsHostEnv     = "HOTELBEDS_HOST"
-	defaultHotelbedsHost = "https://api.test.hotelbeds.com"
-	hotelbedsApiKeyEnv   = "HOTELBEDS_API_KEY"
-	hotelbedsSecretEnv   = "HOTELBEDS_SECRET"
-	appModeEnv           = "MODE"
-	defaultAppMode       = "dev"
+	AppPortEnv           = "APP_PORT"
+	DefaultAppPort       = ":8080"
+	HotelbedsHostEnv     = "HOTELBEDS_HOST"
+	DefaultHotelbedsHost = "https://api.test.hotelbeds.com"
+	HotelbedsApiKeyEnv   = "HOTELBEDS_API_KEY"
+	HotelbedsSecretEnv   = "HOTELBEDS_SECRET"
+	AppModeEnv           = "MODE"
+	DefaultAppMode       = "dev"
+	LogLevel             = "LOG_LEVEL"
 )
 
 func BindEnv() {
@@ -18,11 +19,11 @@ func BindEnv() {
 	viper.AutomaticEnv()
 
 	// Set default values
-	viper.SetDefault(appPortEnv, defaultAppPort)
-	viper.SetDefault(hotelbedsHostEnv, defaultHotelbedsHost)
-	viper.SetDefault(appModeEnv, defaultAppMode)
+	viper.SetDefault(AppPortEnv, DefaultAppPort)
+	viper.SetDefault(HotelbedsHostEnv, DefaultHotelbedsHost)
+	viper.SetDefault(AppModeEnv, DefaultAppMode)
 
-	for _, env := range []string{appPortEnv, hotelbedsHostEnv, hotelbedsApiKeyEnv, hotelbedsSecretEnv} {
+	for _, env := range []string{AppPortEnv, HotelbedsHostEnv, HotelbedsApiKeyEnv, HotelbedsSecretEnv} {
 		_ = viper.BindEnv(env)
 	}
 }

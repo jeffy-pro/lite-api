@@ -27,21 +27,21 @@ func TestHotelBeds_Search(t *testing.T) {
 	apiKey, secret := "12345", "6789"
 
 	t.Run("client error", func(t *testing.T) {
-		hotelBedsCli := NewHotelBeds("0.0.0.0", apiKey, secret, staticClock)
+		hotelBedsCli := NewHotelBeds("0.0.0.0", apiKey, secret, staticClock, nil)
 		res, err := hotelBedsCli.Search(context.Background(), client.SearchRequest{})
 		require.Error(t, err)
 		require.Zero(t, res)
 	})
 
 	t.Run("invalid request", func(t *testing.T) {
-		hotelBedsCli := NewHotelBeds("http://///invalid-url", apiKey, secret, staticClock)
+		hotelBedsCli := NewHotelBeds("http://///invalid-url", apiKey, secret, staticClock, nil)
 		res, err := hotelBedsCli.Search(context.Background(), client.SearchRequest{})
 		require.Error(t, err)
 		require.Zero(t, res)
 	})
 
 	t.Run("invalid request", func(t *testing.T) {
-		hotelBedsCli := NewHotelBeds("http://///invalid-url", apiKey, secret, staticClock)
+		hotelBedsCli := NewHotelBeds("http://///invalid-url", apiKey, secret, staticClock, nil)
 		res, err := hotelBedsCli.Search(context.Background(), client.SearchRequest{})
 		require.Error(t, err)
 		require.Zero(t, res)
@@ -65,7 +65,7 @@ func TestHotelBeds_Search(t *testing.T) {
 			_, _ = fmt.Fprintln(w, `{"message": "hello, world"}`)
 		}))
 		defer mockServer.Close()
-		hotelBedsCli := NewHotelBeds(mockServer.URL, apiKey, secret, staticClock)
+		hotelBedsCli := NewHotelBeds(mockServer.URL, apiKey, secret, staticClock, nil)
 		res, err := hotelBedsCli.Search(context.Background(), client.SearchRequest{})
 		require.NoError(t, err)
 		require.Zero(t, res)
@@ -93,7 +93,7 @@ func TestHotelBeds_Search(t *testing.T) {
 			_, _ = fmt.Fprintln(w, `{"message": "hello, world"}`)
 		}))
 		defer mockServer.Close()
-		hotelBedsCli := NewHotelBeds(mockServer.URL, apiKey, secret, staticClock)
+		hotelBedsCli := NewHotelBeds(mockServer.URL, apiKey, secret, staticClock, nil)
 		res, err := hotelBedsCli.Search(context.Background(), client.SearchRequest{})
 		require.NoError(t, err)
 		require.Zero(t, res)
@@ -118,7 +118,7 @@ func TestHotelBeds_Search(t *testing.T) {
 				}))
 				defer mockServer.Close()
 
-				hotelBedsCli := NewHotelBeds(mockServer.URL, apiKey, secret, staticClock)
+				hotelBedsCli := NewHotelBeds(mockServer.URL, apiKey, secret, staticClock, nil)
 				res, err := hotelBedsCli.Search(context.Background(), client.SearchRequest{})
 				expectedErr := liteapierrors.NewAPIErr(http.StatusText(statusCode), "internal server error")
 				require.ErrorContains(t, err, expectedErr.Error())
@@ -146,7 +146,7 @@ func TestHotelBeds_Search(t *testing.T) {
 				}))
 				defer mockServer.Close()
 
-				hotelBedsCli := NewHotelBeds(mockServer.URL, apiKey, secret, staticClock)
+				hotelBedsCli := NewHotelBeds(mockServer.URL, apiKey, secret, staticClock, nil)
 				res, err := hotelBedsCli.Search(context.Background(), client.SearchRequest{})
 				expectedErr := liteapierrors.NewAPIErr(http.StatusText(statusCode), "something went wrong")
 				require.ErrorContains(t, err, expectedErr.Error())
@@ -181,7 +181,7 @@ func TestHotelBeds_Search(t *testing.T) {
 				}))
 				defer mockServer.Close()
 
-				hotelBedsCli := NewHotelBeds(mockServer.URL, apiKey, secret, staticClock)
+				hotelBedsCli := NewHotelBeds(mockServer.URL, apiKey, secret, staticClock, nil)
 				res, err := hotelBedsCli.Search(context.Background(), client.SearchRequest{})
 				expectedErr := liteapierrors.NewAPIErr("ERR CODE", "detailed message")
 				require.ErrorContains(t, err, expectedErr.Error())
@@ -204,7 +204,7 @@ func TestHotelBeds_Search(t *testing.T) {
 			_, _ = fmt.Fprintln(w, `{`)
 		}))
 		defer mockServer.Close()
-		hotelBedsCli := NewHotelBeds(mockServer.URL, apiKey, secret, staticClock)
+		hotelBedsCli := NewHotelBeds(mockServer.URL, apiKey, secret, staticClock, nil)
 		res, err := hotelBedsCli.Search(context.Background(), client.SearchRequest{})
 		require.Error(t, err)
 		require.Zero(t, res)
@@ -231,7 +231,7 @@ func TestHotelBeds_Search(t *testing.T) {
 
 		defer mockServer.Close()
 
-		hotelBedsCli := NewHotelBeds(mockServer.URL, apiKey, secret, staticClock)
+		hotelBedsCli := NewHotelBeds(mockServer.URL, apiKey, secret, staticClock, nil)
 		res, err := hotelBedsCli.Search(context.Background(), client.SearchRequest{})
 		require.NoError(t, err)
 		require.Equal(t, upstreamResp, res)
@@ -248,7 +248,9 @@ func TestHotelBeds_Search(t *testing.T) {
 			}
 
 			gz := gzip.NewWriter(w)
-			defer gz.Close()
+			defer func() {
+				_ = gz.Close()
+			}()
 
 			w.Header().Set(headerContentEncoding, gzipEncoding)
 			w.Header().Set(headerContentType, applicationJSON)
@@ -259,7 +261,7 @@ func TestHotelBeds_Search(t *testing.T) {
 
 		defer mockServer.Close()
 
-		hotelBedsCli := NewHotelBeds(mockServer.URL, apiKey, secret, staticClock)
+		hotelBedsCli := NewHotelBeds(mockServer.URL, apiKey, secret, staticClock, nil)
 		res, err := hotelBedsCli.Search(context.Background(), client.SearchRequest{})
 		require.NoError(t, err)
 		require.Equal(t, upstreamResp, res)

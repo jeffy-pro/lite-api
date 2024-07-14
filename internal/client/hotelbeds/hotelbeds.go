@@ -11,6 +11,7 @@ import (
 	"io"
 	"lite-api/internal/client"
 	liteapierrors "lite-api/internal/errors"
+	"log/slog"
 	"net/http"
 	"time"
 
@@ -32,18 +33,20 @@ const (
 type HotelBeds struct {
 	clock  clock.Clock
 	cli    *http.Client
+	logger *slog.Logger
 	apiKey string
 	secret string
 	host   string
 }
 
-func NewHotelBeds(host, apiKey, secret string, clock clock.Clock) *HotelBeds {
+func NewHotelBeds(host, apiKey, secret string, clock clock.Clock, logger *slog.Logger) *HotelBeds {
 	if host[len(host)-1] == '/' {
 		host = host[:len(host)-1]
 	}
 
 	return &HotelBeds{
 		cli:    &http.Client{Timeout: time.Second * 5},
+		logger: logger,
 		apiKey: apiKey,
 		secret: secret,
 		host:   host,

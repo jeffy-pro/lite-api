@@ -6,26 +6,29 @@ import (
 	"lite-api/internal/app"
 	"lite-api/internal/client/hotelbeds"
 	"lite-api/internal/pkg/cli"
+	"lite-api/internal/pkg/log"
 	"lite-api/internal/pkg/server"
 	"lite-api/internal/service/hotel"
-	"log"
+	"log/slog"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/spf13/viper"
 
 	"github.com/spf13/cobra"
 	"go.nhat.io/clock"
 )
 
-func start(appPort, appMode, hotelbedsHost, hotelbedsApiKey, hotelbedsSecret string) {
+func start(appPort, appMode, hotelbedsHost, hotelbedsApiKey, hotelbedsSecret string, logger *slog.Logger) {
 	realClock := clock.New()
-	hotelbedsClient := hotelbeds.NewHotelBeds(hotelbedsHost, hotelbedsApiKey, hotelbedsSecret, realClock)
-	hotelsService := hotel.NewHotelService(hotelbedsClient)
-	hotelApp := app.NewHotel(hotelsService, appMode)
+	hotelbedsClient := hotelbeds.NewHotelBeds(hotelbedsHost, hotelbedsApiKey, hotelbedsSecret, realClock, logger)
+	hotelsService := hotel.NewHotelService(hotelbedsClient, logger)
+	hotelApp := app.NewHotel(appMode, hotelsService, logger)
 
 	defer func() {
 		if err := recover(); err != nil {
-			log.Printf("recovering from panic %s", err)
+			logger.Info("recovering from panic", err)
 		}
 	}()
 	c := make(chan os.Signal, 1)
@@ -35,7 +38,7 @@ func start(appPort, appMode, hotelbedsHost, hotelbedsApiKey, hotelbedsSecret str
 
 	go func() {
 		<-c
-		log.Printf("system call received")
+		logger.Info("system call received")
 		cancel()
 	}()
 
@@ -50,14 +53,25 @@ func start(appPort, appMode, hotelbedsHost, hotelbedsApiKey, hotelbedsSecret str
 func main() {
 	cli.BindEnv()
 
-	startCmdHandler, err := cli.CreateStartCmdHandler(start)
+	logLevel, err := log.ParseLevel(viper.GetString(cli.LogLevel))
 	if err != nil {
-		log.Fatal("error booting lite-api application", err)
+		log.Fatal("error parsing log level", err)
+	}
+
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+		Level: logLevel,
+	}))
+
+	startCmdHandler, err := cli.CreateStartCmdHandler(start, logger)
+	if err != nil {
+		logger.Error("error booting lite-api application", "err", err)
+		os.Exit(1)
 	}
 
 	var rootCmd = &cobra.Command{Use: "lite-api"}
 	rootCmd.AddCommand(startCmdHandler)
 	if err := rootCmd.Execute(); err != nil {
-		log.Fatal("error starting lite-api application", err)
+		logger.Error("error starting lite-api application", "err", err)
+		os.Exit(1)
 	}
 }
