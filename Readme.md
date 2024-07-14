@@ -63,6 +63,12 @@ export HOTELBEDS_API_KEY=<yourapikey>
 export HOTELBEDS_SECRET=<yoursecret>
 ./lite-api start
 ```
+
+In addition to this, environment variable `LOG_LEVEL` can be used to control log levels in the application. 
+Allowed values are `INFO`, `DEBUG`, `WARN`, `ERROR`, these values are case-insensitive. 
+
+`INFO` is the default log level.
+
 ## Taskfile Usage
 This project uses [Taskfile](https://taskfile.dev/) for managing various development and CI/CD tasks. The Taskfile is split into multiple files for better organization:
 
