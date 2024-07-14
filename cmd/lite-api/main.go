@@ -12,11 +12,8 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"strings"
 	"syscall"
 	"time"
-
-	"github.com/gin-gonic/gin"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -69,11 +66,7 @@ func start(appPort, appMode, hotelbedsHost, hotelbedsApiKey, hotelbedsSecret str
 	realClock := clock.New()
 	hotelbedsClient := hotelbeds.NewHotelBeds(hotelbedsHost, hotelbedsApiKey, hotelbedsSecret, realClock)
 	hotelsService := hotel.NewHotelService(hotelbedsClient)
-	hotelApp := app.NewHotel(hotelsService)
-
-	if strings.ToLower(appMode) == "prod" {
-		gin.SetMode(gin.ReleaseMode)
-	}
+	hotelApp := app.NewHotel(hotelsService, appMode)
 
 	defer func() {
 		if err := recover(); err != nil {

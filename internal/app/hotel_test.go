@@ -23,7 +23,7 @@ import (
 
 func setup(tb testing.TB, hotelService service.HotelService) http.Handler {
 	tb.Helper()
-	hotel := NewHotel(hotelService)
+	hotel := NewHotel(hotelService, "test")
 	return hotel.RegisterRoutes()
 }
 

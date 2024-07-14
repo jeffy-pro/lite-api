@@ -4,6 +4,7 @@ import (
 	"lite-api/internal/dto"
 	"lite-api/internal/service"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -15,17 +16,23 @@ var ApiVersion = "1.0.0"
 // Hotel interfaces external HTTP and proxies the requests to Hotelbeds.
 type Hotel struct {
 	hotelService service.HotelService
+	mode         string
 }
 
 // NewHotel returns app configured with passed surveyService.
-func NewHotel(hotelService service.HotelService) *Hotel {
+func NewHotel(hotelService service.HotelService, appMode string) *Hotel {
 	return &Hotel{
 		hotelService: hotelService,
+		mode:         appMode,
 	}
 }
 
 // RegisterRoutes registers the HTTP endpoints to be exposed to clients.
-func (h *Hotel) RegisterRoutes() *gin.Engine {
+func (h *Hotel) RegisterRoutes() http.Handler {
+	if strings.ToLower(h.mode) == "prod" {
+		gin.SetMode(gin.ReleaseMode)
+	}
+
 	router := gin.Default()
 	router.GET("/", h.HealthCheck)
 
