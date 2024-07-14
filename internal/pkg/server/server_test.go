@@ -2,10 +2,11 @@ package server
 
 import (
 	"context"
-	"github.com/stretchr/testify/assert"
 	"net/http"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestServe(t *testing.T) {
@@ -25,8 +26,8 @@ func TestServe(t *testing.T) {
 
 		// Test if the server is up and running
 		resp, err := http.Get("http://localhost:8081")
-		assert.NoError(t, err)
-		assert.Equal(t, http.StatusOK, resp.StatusCode)
+		require.NoError(t, err)
+		require.Equal(t, http.StatusOK, resp.StatusCode)
 		// Cancel the context to simulate shutdown
 		cancel()
 
@@ -34,7 +35,7 @@ func TestServe(t *testing.T) {
 
 		// Test if the server has shut down
 		resp, err = http.Get("http://localhost:8081")
-		assert.Error(t, err)
+		require.Error(t, err)
 	}
 
 }

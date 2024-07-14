@@ -4,7 +4,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -33,7 +32,7 @@ func TestCurrency_Validate(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			assert.Equal(t, tt.wantErr, tt.currency.Validate())
+			require.Equal(t, tt.wantErr, tt.currency.Validate())
 		})
 	}
 }
@@ -63,7 +62,7 @@ func TestCountry_Validate(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			assert.Equal(t, tt.wantErr, tt.country.Validate())
+			require.Equal(t, tt.wantErr, tt.country.Validate())
 		})
 	}
 }
@@ -117,11 +116,11 @@ func TestDateString_Validate(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.date.Parse()
 			if tt.wantErr {
-				assert.Error(t, err)
+				require.Error(t, err)
 				return
 			}
 
-			assert.Equal(t, tt.want, got)
+			require.Equal(t, tt.want, got)
 		})
 	}
 }
@@ -175,11 +174,11 @@ func TestIntegerList_Parse(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.input.Parse()
 			if tt.wantErr {
-				assert.Error(t, err)
+				require.Error(t, err)
 				return
 			}
 
-			assert.Equal(t, tt.expected, got)
+			require.Equal(t, tt.expected, got)
 		})
 	}
 }
@@ -224,7 +223,7 @@ func TestOccupancyList_Parse(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.o.Parse()
 			if tt.wantErr {
-				assert.Error(t, err)
+				require.Error(t, err)
 				return
 			}
 

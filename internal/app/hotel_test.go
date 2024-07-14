@@ -184,7 +184,7 @@ func TestHotel_Search(t *testing.T) {
 		router.ServeHTTP(resp, req)
 		require.Equal(t, http.StatusInternalServerError, resp.Code)
 		respBody, err := io.ReadAll(resp.Body)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		require.Contains(t, string(respBody), assert.AnError.Error())
 	})
 

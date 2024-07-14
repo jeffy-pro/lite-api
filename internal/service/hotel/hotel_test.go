@@ -24,8 +24,8 @@ func TestHotel_Search(t *testing.T) {
 		res, err := hotelService.Search(context.Background(), dto.SearchRequest{
 			Occupancies: "[",
 		})
-		assert.Error(t, err)
-		assert.Zero(t, res)
+		require.Error(t, err)
+		require.Zero(t, res)
 	})
 
 	t.Run("hotelbeds client error", func(t *testing.T) {
@@ -70,7 +70,7 @@ func TestHotel_Search(t *testing.T) {
 			cliMock.EXPECT().Search(context.Background(), cliSearchReq).Return(cliResp, nil)
 			hotelService := NewHotelService(cliMock)
 			res, err := hotelService.Search(context.Background(), searchReq)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 
 			expectedHotelInfos := dto.HotelInfos{
 				{
@@ -109,7 +109,7 @@ func TestHotel_Search(t *testing.T) {
 			cliMock.EXPECT().Search(context.Background(), cliSearchReq).Return(cliResp, nil)
 			hotelService := NewHotelService(cliMock)
 			res, err := hotelService.Search(context.Background(), searchReq)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 
 			expectedHotelInfos := dto.HotelInfos{
 				{
@@ -143,10 +143,10 @@ func TestHotel_Search(t *testing.T) {
 			cliMock.EXPECT().Search(context.Background(), cliSearchReq).Return(cliResp, nil)
 			hotelService := NewHotelService(cliMock)
 			res, err := hotelService.Search(context.Background(), searchReq)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 
 			expectedRequest, err := json.Marshal(searchReq)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			expectedHotelInfos := dto.HotelInfos{
 				{
 					HotelID:  "264",
@@ -162,7 +162,7 @@ func TestHotel_Search(t *testing.T) {
 
 			// workaround since the json in testdata has indentation.
 			hotelbedsResponse, err = json.Marshal(cliResp)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 
 			expectedDtoResp := dto.SearchResponse{
 				Data: expectedHotelInfos,

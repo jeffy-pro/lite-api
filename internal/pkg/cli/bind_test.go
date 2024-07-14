@@ -1,10 +1,11 @@
 package cli
 
 import (
-	"github.com/spf13/viper"
-	"github.com/stretchr/testify/require"
 	"os"
 	"testing"
+
+	"github.com/spf13/viper"
+	"github.com/stretchr/testify/require"
 )
 
 func TestBindEnv(t *testing.T) {

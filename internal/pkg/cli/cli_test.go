@@ -1,8 +1,9 @@
 package cli
 
 import (
-	"github.com/stretchr/testify/require"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
@@ -13,24 +14,24 @@ func TestCreateStartCmdHandler(t *testing.T) {
 		mockStart := func(appPort, appMode, hotelbedsHost, hotelbedsApiKey, hotelbedsSecret string) {}
 		cmd, err := CreateStartCmdHandler(mockStart)
 
-		assert.NoError(t, err)
-		assert.NotNil(t, cmd)
-		assert.Equal(t, "start", cmd.Use)
-		assert.Equal(t, "Start lite-api application", cmd.Short)
+		require.NoError(t, err)
+		require.NotNil(t, cmd)
+		require.Equal(t, "start", cmd.Use)
+		require.Equal(t, "Start lite-api application", cmd.Short)
 	})
 
 	t.Run("Flag bindings", func(t *testing.T) {
 		mockStart := func(appPort, appMode, hotelbedsHost, hotelbedsApiKey, hotelbedsSecret string) {}
 		cmd, err := CreateStartCmdHandler(mockStart)
 
-		assert.NoError(t, err)
-		assert.NotNil(t, cmd)
+		require.NoError(t, err)
+		require.NotNil(t, cmd)
 
-		assert.NotNil(t, cmd.Flags().Lookup("port"))
-		assert.NotNil(t, cmd.Flags().Lookup("mode"))
-		assert.NotNil(t, cmd.Flags().Lookup("host"))
-		assert.NotNil(t, cmd.Flags().Lookup("apikey"))
-		assert.NotNil(t, cmd.Flags().Lookup("secret"))
+		require.NotNil(t, cmd.Flags().Lookup("port"))
+		require.NotNil(t, cmd.Flags().Lookup("mode"))
+		require.NotNil(t, cmd.Flags().Lookup("host"))
+		require.NotNil(t, cmd.Flags().Lookup("apikey"))
+		require.NotNil(t, cmd.Flags().Lookup("secret"))
 	})
 
 	t.Run("Viper bindings", func(t *testing.T) {
@@ -38,50 +39,50 @@ func TestCreateStartCmdHandler(t *testing.T) {
 		mockStart := func(appPort, appMode, hotelbedsHost, hotelbedsApiKey, hotelbedsSecret string) {}
 		cmd, err := CreateStartCmdHandler(mockStart)
 
-		assert.NoError(t, err)
-		assert.NotNil(t, cmd)
+		require.NoError(t, err)
+		require.NotNil(t, cmd)
 
-		assert.NotNil(t, viper.GetString(appPortEnv))
-		assert.NotNil(t, viper.GetString(appModeEnv))
-		assert.NotNil(t, viper.GetString(hotelbedsHostEnv))
-		assert.NotNil(t, viper.GetString(hotelbedsApiKeyEnv))
-		assert.NotNil(t, viper.GetString(hotelbedsSecretEnv))
+		require.NotNil(t, viper.GetString(appPortEnv))
+		require.NotNil(t, viper.GetString(appModeEnv))
+		require.NotNil(t, viper.GetString(hotelbedsHostEnv))
+		require.NotNil(t, viper.GetString(hotelbedsApiKeyEnv))
+		require.NotNil(t, viper.GetString(hotelbedsSecretEnv))
 	})
 
 	t.Run("Command execution", func(t *testing.T) {
 		var executedStart bool
 		mockStart := func(appPort, appMode, hotelbedsHost, hotelbedsApiKey, hotelbedsSecret string) {
 			executedStart = true
-			assert.Equal(t, defaultAppPort, appPort)
-			assert.Equal(t, defaultAppMode, appMode)
-			assert.Equal(t, defaultHotelbedsHost, hotelbedsHost)
-			assert.Empty(t, hotelbedsApiKey)
-			assert.Empty(t, hotelbedsSecret)
+			require.Equal(t, defaultAppPort, appPort)
+			require.Equal(t, defaultAppMode, appMode)
+			require.Equal(t, defaultHotelbedsHost, hotelbedsHost)
+			require.Empty(t, hotelbedsApiKey)
+			require.Empty(t, hotelbedsSecret)
 		}
 
 		cmd, err := CreateStartCmdHandler(mockStart)
-		assert.NoError(t, err)
-		assert.NotNil(t, cmd)
+		require.NoError(t, err)
+		require.NotNil(t, cmd)
 
-		assert.NoError(t, cmd.Execute())
+		require.NoError(t, cmd.Execute())
 
-		assert.True(t, executedStart)
+		require.True(t, executedStart)
 	})
 
 	t.Run("Command execution with flags", func(t *testing.T) {
 		var executedStart bool
 		mockStart := func(appPort, appMode, hotelbedsHost, hotelbedsApiKey, hotelbedsSecret string) {
 			executedStart = true
-			assert.Equal(t, "8080", appPort)
-			assert.Equal(t, "test", appMode)
-			assert.Equal(t, "testhost", hotelbedsHost)
-			assert.Equal(t, "testkey", hotelbedsApiKey)
-			assert.Equal(t, "testsecret", hotelbedsSecret)
+			require.Equal(t, "8080", appPort)
+			require.Equal(t, "test", appMode)
+			require.Equal(t, "testhost", hotelbedsHost)
+			require.Equal(t, "testkey", hotelbedsApiKey)
+			require.Equal(t, "testsecret", hotelbedsSecret)
 		}
 
 		cmd, err := CreateStartCmdHandler(mockStart)
-		assert.NoError(t, err)
-		assert.NotNil(t, cmd)
+		require.NoError(t, err)
+		require.NotNil(t, cmd)
 
 		require.NoError(t, cmd.Flags().Set("port", "8080"))
 		require.NoError(t, cmd.Flags().Set("mode", "test"))
