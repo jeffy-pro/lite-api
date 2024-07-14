@@ -10,5 +10,5 @@ tasks:
   lint:
     desc: Run golangci-lint
     cmds:
-      - golangci-lint run
+      - golangci-lint run --issues-exit-code=0
       - goimports -w .

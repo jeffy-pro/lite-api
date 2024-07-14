@@ -3,8 +3,6 @@ package main
 
 import (
 	"context"
-	"github.com/spf13/cobra"
-	"go.nhat.io/clock"
 	"lite-api/internal/app"
 	"lite-api/internal/client/hotelbeds"
 	"lite-api/internal/pkg/cli"
@@ -14,6 +12,9 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/spf13/cobra"
+	"go.nhat.io/clock"
 )
 
 func start(appPort, appMode, hotelbedsHost, hotelbedsApiKey, hotelbedsSecret string) {
