@@ -3,21 +3,18 @@ package main
 
 import (
 	"context"
-	"errors"
 	"fmt"
-	"lite-api/internal/app"
-	"lite-api/internal/client/hotelbeds"
-	"lite-api/internal/service/hotel"
-	"log"
-	"net/http"
-	"os"
-	"os/signal"
-	"syscall"
-	"time"
-
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"go.nhat.io/clock"
+	"lite-api/internal/app"
+	"lite-api/internal/client/hotelbeds"
+	"lite-api/internal/pkg/server"
+	"lite-api/internal/service/hotel"
+	"log"
+	"os"
+	"os/signal"
+	"syscall"
 )
 
 const (
@@ -30,37 +27,6 @@ const (
 	appModeEnv           = "MODE"
 	defaultAppMode       = "dev"
 )
-
-// serve handles the logic of running  server in a goroutine and waiting for signal to gracefully stop the server
-// on ctx.Done signal a request to shut down the server is sent, so that no new requests will be served.
-func serve(ctx context.Context, appPort string, hotel *app.Hotel) {
-	if appPort[0] != ':' {
-		appPort = ":" + appPort
-	}
-	router := hotel.RegisterRoutes()
-
-	srv := &http.Server{Addr: appPort, Handler: router}
-	go func() {
-		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			log.Fatalf("listen:%s\n", err)
-		}
-	}()
-
-	log.Printf("server started on port %s", appPort)
-
-	<-ctx.Done()
-
-	log.Printf("graceful shutdown request received")
-
-	ctxShutDown, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	if err := srv.Shutdown(ctxShutDown); err != nil {
-		log.Fatalf("server Shutdown Failed:%s", err.Error())
-	}
-
-	log.Println("application stopped accepting requests")
-}
 
 func start(appPort, appMode, hotelbedsHost, hotelbedsApiKey, hotelbedsSecret string) {
 	realClock := clock.New()
@@ -84,7 +50,8 @@ func start(appPort, appMode, hotelbedsHost, hotelbedsApiKey, hotelbedsSecret str
 		cancel()
 	}()
 
-	serve(ctx, appPort, hotelApp)
+	handler := hotelApp.RegisterRoutes()
+	server.ServeHTTP(ctx, appPort, handler)
 }
 
 // main initiates new app from argument receiver over cli args or env and calls serve to start the server
