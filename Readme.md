@@ -1,4 +1,5 @@
 # Lite-API Proxy for Hotelbeds Hotels Search
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=jeffy-pro_lite-api&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=jeffy-pro_lite-api)
 
 Lite-API is a Go application that proxies requests to the Hotelbeds hotels availability [endpoint](https://developer.hotelbeds.com/documentation/hotels/booking-api/api-referenhttps://developer.hotelbeds.com/documentation/hotels/booking-api/api-reference/#tag/Availability), providing a convenient way to interact with Hotelbeds API via a local proxy server.
 
